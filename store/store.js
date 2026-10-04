@@ -10,14 +10,13 @@ export const SET_FILTERBY = 'SET_FILTERBY'
 export const SET_ISLOADING = 'SET_ISLOADING'
 
 export const SET_USER = 'SET_USER'
-export const SET_USER_SCORE = 'SET_USER_SCORE'
+export const SET_USER_BALANCE = 'SET_USER_BALANCE'
 
 const initialState = {
     todos: [],
     filterBy: {},
     isLoading: true,
     loggedinUser: userService.getLoggedinUser(),
-
 }
 
 
@@ -44,8 +43,8 @@ export function appReducer(state = initialState, cmd = {}) {
         case SET_USER:
             return { ...state, loggedinUser: cmd.loggedinUser }
 
-        case SET_USER_SCORE:
-            const loggedinUser = { ...state.loggedinUser, score: cmd.score }
+        case SET_USER_BALANCE:
+            const loggedinUser = { ...state.loggedinUser, balance: cmd.userBalance }
             return { ...state, loggedinUser }
 
         default:

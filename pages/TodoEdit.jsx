@@ -1,14 +1,17 @@
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { saveTodo } from "../store/actions/todo.js"
+import { userBalance } from "../store/actions/user.js"
 
-const { useState, useEffect } = React
+const { useState, useEffect, useRef } = React
 const { useNavigate, useParams } = ReactRouterDOM
 
 export function TodoEdit() {
 
     const [todoToEdit, setTodoToEdit] = useState(todoService.getEmptyTodo())
-    
+    const balanceChange = useRef(0)
+    // balanceChange.current = 0
+    console.log('balanceChange.current', balanceChange.current)
     const navigate = useNavigate()
     const params = useParams()
 
@@ -34,6 +37,13 @@ export function TodoEdit() {
 
             case 'checkbox':
                 value = target.checked
+                console.log('value', value)
+                console.log('value===true', value === true)
+                if (value === true) balanceChange.current = 10
+                else balanceChange.current = -10
+
+                console.log('balanceChange.current', balanceChange.current)
+
                 break
 
             default:
@@ -49,6 +59,7 @@ export function TodoEdit() {
             .then((savedTodo) => {
                 navigate('/todo')
                 showSuccessMsg(`Todo Saved (id: ${savedTodo._id})`)
+                userBalance(balanceChange.current)
             })
             .catch(err => {
                 showErrorMsg('Cannot save todo')

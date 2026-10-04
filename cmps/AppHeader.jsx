@@ -11,7 +11,7 @@ import { userLogout } from '../store/actions/user.js'
 export function AppHeader() {
     const navigate = useNavigate()
     const user = useSelector(storedState => storedState.loggedinUser)
-    console.log('user',user)
+
     function onLogout() {
         userLogout()
             .catch((err) => {
@@ -27,8 +27,11 @@ export function AppHeader() {
             <section className="header-container">
                 <h1>React Todo App</h1>
                 {user ? (
-                    < section >
-                        <Link to={`/user/${user._id}`}>Hello {user.fullname}</Link>
+                    < section  className="logged-in-user" >
+                        <Link to={`/user/${user._id}`}>
+                            <p >Hello {user.fullname} {user.balance && <span>{user.balance} pts</span>}</p>
+
+                        </Link>
                         <button onClick={onLogout}>Logout</button>
                     </ section >
                 ) : (
