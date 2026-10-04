@@ -3,9 +3,11 @@ const { createStore } = Redux
 export const SET_TODOS = 'SET_TODOS'
 export const REMOVE_TODO = 'REMOVE_TODO'
 export const EDIT_TODO = 'EDIT_TODO'
+export const SET_FILTERBY = 'SET_FILTERBY'
 
 const initialState = {
-    todos: []
+    todos: [],
+    filterBy: {}
 }
 
 
@@ -20,6 +22,8 @@ export function appReducer(state = initialState, cmd = {}) {
             }
         case EDIT_TODO:
             return { ...state, todos: state.todos.map(todo => todo._id === cmd.todo._id ? cmd.todo : todo) }
+        case SET_FILTERBY:
+            return { ...state, filterBy: { ...state.filterBy, ...cmd.filterBy } }
         default:
             return state
     }
