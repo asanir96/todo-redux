@@ -18,11 +18,6 @@ export function TodoIndex() {
     // Special hook for accessing search-params:
     const [searchParams, setSearchParams] = useSearchParams()
 
-    console.log('filterBy', filterBy)
-    console.log('todoService.getFilterFromSearchParams(searchParams)', todoService.getFilterFromSearchParams(searchParams))
-
-    // const [filterBy, setFilterBy] = useState(defaultFilter)
-
     useEffect(() => {
         dispatch({ type: SET_FILTERBY, filterBy: todoService.getFilterFromSearchParams(searchParams) })
     }, [])
@@ -64,7 +59,7 @@ export function TodoIndex() {
     if (!todos) return <div>Loading...</div>
     return (
         <section className="todo-index">
-            <TodoFilter filterBy={filterBy} onSetFilterBy={onSetFilterBy} />
+            {Object.entries(filterBy).length !== 0 && <TodoFilter filterBy={filterBy} onSetFilterBy={onSetFilterBy} />}
             <div>
                 <Link to="/todo/edit" className="btn" >Add Todo</Link>
             </div>
