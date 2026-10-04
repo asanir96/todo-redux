@@ -4,17 +4,20 @@ import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { loadTodos, removeTodo, saveTodo } from "../store/actions/todo.js"
-import { SET_FILTERBY } from "../store/store.js"
+import { SET_FILTERBY, TOGGLE_ISLOADING } from "../store/store.js"
+
 const { useState, useEffect } = React
 const { useSelector, useDispatch } = ReactRedux
 const { Link, useSearchParams } = ReactRouterDOM
 
 export function TodoIndex() {
 
-    // const [todos, setTodos] = useState(null)
     const todos = useSelector(storeState => storeState.todos)
     const filterBy = useSelector(storeState => storeState.filterBy)
+    const isLoading = useSelector(storeState => storeState.isLoading)
+
     const dispatch = useDispatch()
+
     // Special hook for accessing search-params:
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -25,6 +28,7 @@ export function TodoIndex() {
     useEffect(() => {
         setSearchParams(filterBy)
         loadTodos(filterBy)
+            .then()
             .catch(err => {
                 console.eror('err:', err)
                 showErrorMsg('Cannot load todos')
@@ -56,7 +60,7 @@ export function TodoIndex() {
             })
     }
 
-    if (!todos) return <div>Loading...</div>
+    if (isLoading) return <div>Loading...</div>
     return (
         <section className="todo-index">
             {Object.entries(filterBy).length !== 0 && <TodoFilter filterBy={filterBy} onSetFilterBy={onSetFilterBy} />}

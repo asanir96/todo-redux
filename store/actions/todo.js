@@ -4,6 +4,7 @@ import { store } from '../store.js'
 export function loadTodos(filterBy) {
     return todoService.query(filterBy)
         .then(todos => store.dispatch({ type: 'SET_TODOS', todos }))
+        .then(() => store.dispatch({ type: 'SET_ISLOADING', isLoading: false }))
 }
 
 export function removeTodo(todoId) {
