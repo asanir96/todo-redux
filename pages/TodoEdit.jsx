@@ -1,5 +1,6 @@
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
+import { saveTodo } from "../store/actions/todo.js"
 
 const { useState, useEffect } = React
 const { useNavigate, useParams } = ReactRouterDOM
@@ -7,6 +8,7 @@ const { useNavigate, useParams } = ReactRouterDOM
 export function TodoEdit() {
 
     const [todoToEdit, setTodoToEdit] = useState(todoService.getEmptyTodo())
+    
     const navigate = useNavigate()
     const params = useParams()
 
@@ -43,7 +45,7 @@ export function TodoEdit() {
 
     function onSaveTodo(ev) {
         ev.preventDefault()
-        todoService.save(todoToEdit)
+        saveTodo(todoToEdit)
             .then((savedTodo) => {
                 navigate('/todo')
                 showSuccessMsg(`Todo Saved (id: ${savedTodo._id})`)
@@ -66,7 +68,7 @@ export function TodoEdit() {
                 <input onChange={handleChange} value={importance} type="number" name="importance" id="importance" />
 
                 <label htmlFor="isDone">isDone:</label>
-                <input onChange={handleChange} value={isDone} type="checkbox" name="isDone" id="isDone" />
+                <input onChange={handleChange} value={isDone} type="checkbox" name="isDone" id="isDone" checked={isDone} />
 
 
                 <button>Save</button>

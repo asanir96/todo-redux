@@ -4,7 +4,7 @@ import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { loadTodos, removeTodo, saveTodo } from "../store/actions/todo.js"
-import { SET_FILTERBY, TOGGLE_ISLOADING } from "../store/store.js"
+import { SET_FILTERBY } from "../store/store.js"
 
 const { useState, useEffect } = React
 const { useSelector, useDispatch } = ReactRedux
