@@ -9,7 +9,9 @@ export const userService = {
     getById,
     query,
     getEmptyCredentials,
-    updateBalance
+    updateBalance,
+    updateUserActivities,
+    getUserActivies
 }
 const STORAGE_KEY_LOGGEDIN = 'user'
 const STORAGE_KEY = 'userDB'
@@ -34,7 +36,8 @@ function login({ username, password }) {
 function signup({ username, password, fullname }) {
     const user = { username, password, fullname }
     user.createdAt = user.updatedAt = Date.now()
-
+    user.activities = []
+    user.balance = 0
     return storageService.post(STORAGE_KEY, user)
         .then(_setLoggedinUser)
 }
@@ -49,7 +52,12 @@ function getLoggedinUser() {
 }
 
 function _setLoggedinUser(user) {
-    const userToSave = { _id: user._id, fullname: user.fullname, balance: user.balance? user.balance : [] }
+    const userToSave = {
+        _id: user._id,
+        fullname: user.fullname,
+        balance: user.balance ? user.balance : 0,
+    }
+
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN, JSON.stringify(userToSave))
     return userToSave
 }
@@ -65,12 +73,40 @@ function updateBalance(diff) {
     return userService.getById(getLoggedinUser()._id)
         .then(user => {
             if (user.balance + diff < 0) return Promise.reject('No credit')
+
             user.balance += diff
+            console.log('user', user)
             return storageService.put(STORAGE_KEY, user)
                 .then((user) => {
                     _setLoggedinUser(user)
                     return user.balance
                 })
+        })
+}
+function updateUserActivities(activity) {
+    return userService.getById(getLoggedinUser()._id)
+        .then(user => {
+            if (!user.activities) {
+                user.activities = [activity]
+            } else {
+                user.activities.push(activity)
+            }
+
+            if (activity.txt === 'Completed a task') user.balance += 10
+
+            return storageService.put(STORAGE_KEY, user)
+                .then((user) => {
+                    _setLoggedinUser(user)
+                    return { activities: user.activities, balance: user.balance }
+                })
+        })
+}
+
+function getUserActivies(userId) {
+    return userService.getById(userId)
+        .then(user => {
+            console.log(user.activities)
+            return user.activities ? user.activities : null
         })
 }
 // signup({username: 'muki', password: 'muki1', fullname: 'Muki Ja'})

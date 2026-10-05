@@ -1,7 +1,7 @@
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { saveTodo } from "../store/actions/todo.js"
-import { userBalance } from "../store/actions/user.js"
+import { userBalance, userActivities } from "../store/actions/user.js"
 
 const { useState, useEffect, useRef } = React
 const { useNavigate, useParams } = ReactRouterDOM
@@ -9,9 +9,9 @@ const { useNavigate, useParams } = ReactRouterDOM
 export function TodoEdit() {
 
     const [todoToEdit, setTodoToEdit] = useState(todoService.getEmptyTodo())
-    const balanceChange = useRef(0)
+    const isCompletedTask = useRef(false)
     // balanceChange.current = 0
-    console.log('balanceChange.current', balanceChange.current)
+    console.log('balanceChange.current', isCompletedTask.current)
     const navigate = useNavigate()
     const params = useParams()
 
@@ -39,10 +39,9 @@ export function TodoEdit() {
                 value = target.checked
                 console.log('value', value)
                 console.log('value===true', value === true)
-                if (value === true) balanceChange.current = 10
-                else balanceChange.current = -10
+                if (value === true) isCompletedTask.current = true
 
-                console.log('balanceChange.current', balanceChange.current)
+                console.log('balanceChange.current', isCompletedTask.current)
 
                 break
 
@@ -59,7 +58,14 @@ export function TodoEdit() {
             .then((savedTodo) => {
                 navigate('/todo')
                 showSuccessMsg(`Todo Saved (id: ${savedTodo._id})`)
-                userBalance(balanceChange.current)
+                if (!params.todoId) {
+                    userActivities({ txt: `Added a task`, at: Date.now() })
+                }
+                else if (isCompletedTask.current) {
+                    userActivities({ txt: `Completed a task`, at: Date.now() })
+                } else {
+                    userActivities({ txt: `Edited a todo`, at: Date.now() })
+                }
             })
             .catch(err => {
                 showErrorMsg('Cannot save todo')

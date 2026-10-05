@@ -4,6 +4,7 @@ import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { loadTodos, removeTodo, saveTodo } from "../store/actions/todo.js"
+import { userActivities } from "../store/actions/user.js"
 import { SET_FILTERBY } from "../store/store.js"
 
 const { useEffect } = React
@@ -28,7 +29,6 @@ export function TodoIndex() {
     useEffect(() => {
         setSearchParams(filterBy)
         loadTodos(filterBy)
-            .then()
             .catch(err => {
                 console.eror('err:', err)
                 showErrorMsg('Cannot load todos')
@@ -46,6 +46,7 @@ export function TodoIndex() {
                 console.log('err:', err)
                 showErrorMsg('Cannot remove todo ' + todoId)
             })
+            .then(() => userActivities({ txt: 'Deleted a task', at: Date.now() }))
     }
 
     function onToggleTodo(todo) {
