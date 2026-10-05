@@ -6,7 +6,7 @@ import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { loadTodos, removeTodo, saveTodo } from "../store/actions/todo.js"
 import { SET_FILTERBY } from "../store/store.js"
 
-const { useState, useEffect } = React
+const { useEffect } = React
 const { useSelector, useDispatch } = ReactRedux
 const { Link, useSearchParams } = ReactRouterDOM
 
@@ -60,7 +60,6 @@ export function TodoIndex() {
             })
     }
 
-    if (isLoading) return <div>Loading...</div>
     return (
         <section className="todo-index">
             {Object.entries(filterBy).length !== 0 && <TodoFilter filterBy={filterBy} onSetFilterBy={onSetFilterBy} />}

@@ -10,9 +10,14 @@ export function loadTodos(filterBy = {}) {
 }
 
 export function removeTodo(todoId) {
+    store.dispatch({ type: 'SET_ISLOADING', isLoading: true })
+
     return todoService.remove(todoId)
         .then(() => store.dispatch({ type: 'REMOVE_TODO', todoId }))
+        .finally(() => store.dispatch({ type: 'SET_ISLOADING', isLoading: false }))
+
 }
+
 export function saveTodo(todoToSave) {
     return todoService.save(todoToSave)
         .then(todoToSave => {
