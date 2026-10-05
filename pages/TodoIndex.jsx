@@ -68,12 +68,11 @@ export function TodoIndex() {
                 <Link to="/todo/edit" className="btn" >Add Todo</Link>
             </div>
             <h2>Todos List</h2>
-            <TodoList todos={todos} onRemoveTodo={onRemoveTodo} onToggleTodo={onToggleTodo} />
-            <hr />
+            {isLoading ? <div>Loading...</div> : <TodoList todos={todos} onRemoveTodo={onRemoveTodo} onToggleTodo={onToggleTodo} />}
             <h2>Todos Table</h2>
-            <div style={{ width: '60%', margin: 'auto' }}>
+            {isLoading ? <div>Loading...</div> : <div style={{ width: '60%', margin: 'auto' }}>
                 <DataTable todos={todos} onRemoveTodo={onRemoveTodo} />
-            </div>
+            </div>}
         </section>
     )
 }
