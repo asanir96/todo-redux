@@ -33,7 +33,6 @@ export function UserDetails() {
 
     function onUpdateUser(userToEdit, ev) {
         ev.preventDefault()
-        console.log('userToEdit', userToEdit)
         return updateUser(userToEdit)
             .then(() => {
                 showSuccessMsg('User prefs. updated')
