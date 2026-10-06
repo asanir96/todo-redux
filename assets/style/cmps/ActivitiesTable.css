@@ -1,6 +1,10 @@
+.user-activities h3 {
+  text-align: center;
+  margin-top:2em;
+}
 .activities-table {
   border-collapse: collapse;
-  margin: 25px 0;
+  margin: 25px auto;
   font-size: 0.9em;
   min-width: 400px;
   border-radius: 5px 5px 0 0;
@@ -40,3 +44,5 @@
   cursor: pointer;
   color: #009879;
 }
+
+

@@ -1,0 +1,21 @@
+.preferences-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+
+    width:fit-content;
+   
+    margin: auto;
+
+    padding: 0.5em;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+
+}
+
+.preference-field {
+    display: flex;
+    gap: 1em;
+}

@@ -12,13 +12,13 @@ const { useSelector, useDispatch } = ReactRedux
 const { Link, useSearchParams } = ReactRouterDOM
 
 export function TodoIndex() {
-
+    const user = useSelector(storeState => storeState.loggedinUser)
     const todos = useSelector(storeState => storeState.todos)
     const filterBy = useSelector(storeState => storeState.filterBy)
     const isLoading = useSelector(storeState => storeState.isLoading)
 
     const dispatch = useDispatch()
-
+    console.log('user', user)
     // Special hook for accessing search-params:
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -68,10 +68,18 @@ export function TodoIndex() {
                 <Link to="/todo/edit" className="btn" >Add Todo</Link>
             </div>
             <h2>Todos List</h2>
-            {isLoading ? <div>Loading...</div> : <TodoList todos={todos} onRemoveTodo={onRemoveTodo} onToggleTodo={onToggleTodo} />}
+            {isLoading ? <div>Loading...</div> :
+                <TodoList
+                    todos={todos}
+                    onRemoveTodo={onRemoveTodo}
+                    onToggleTodo={onToggleTodo}
+                    color={user && user.preferences ? user.preferences.todoColor : null} />}
             <h2>Todos Table</h2>
             {isLoading ? <div>Loading...</div> : <div style={{ width: '60%', margin: 'auto' }}>
-                <DataTable todos={todos} onRemoveTodo={onRemoveTodo} />
+                <DataTable
+                    todos={todos}
+                    onRemoveTodo={onRemoveTodo}
+                    color={user && user.preferences ? user.preferences.tableColor : null} />
             </div>}
         </section>
     )

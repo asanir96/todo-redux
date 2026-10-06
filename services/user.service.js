@@ -11,7 +11,8 @@ export const userService = {
     getEmptyCredentials,
     updateBalance,
     updateUserActivities,
-    getUserActivies
+    getUserActivies,
+    update
 }
 const STORAGE_KEY_LOGGEDIN = 'user'
 const STORAGE_KEY = 'userDB'
@@ -56,6 +57,7 @@ function _setLoggedinUser(user) {
         _id: user._id,
         fullname: user.fullname,
         balance: user.balance ? user.balance : 0,
+        preferences: user.preferences
     }
 
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN, JSON.stringify(userToSave))
@@ -100,6 +102,11 @@ function updateUserActivities(activity) {
                     return { activities: user.activities, balance: user.balance }
                 })
         })
+}
+
+function update(user) {
+    return storageService.put(STORAGE_KEY, user)
+        .then(_setLoggedinUser)
 }
 
 function getUserActivies(userId) {
