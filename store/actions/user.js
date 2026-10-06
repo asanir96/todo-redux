@@ -1,10 +1,10 @@
 import { userService } from '../../services/user.service.js'
-import { CLEAR_CART, SET_USER, SET_USER_BALANCE,SET_USER_ACTIVITIES, store } from '../store.js'
+import { store } from '../store.js'
+import { SET_USER, SET_USER_BALANCE, SET_USER_ACTIVITIES } from '../user.reducer.js'
 
 export function userLogin(credentials) {
     return userService.login(credentials)
         .then(loggedinUser => {
-            console.log('loggedInUser', loggedinUser)
             store.dispatch({ type: SET_USER, loggedinUser })
             return loggedinUser
         })
@@ -13,8 +13,6 @@ export function userLogin(credentials) {
 export function userSignup(credentials) {
     return userService.signup(credentials)
         .then(loggedinUser => {
-            console.log('loggedInUser', loggedinUser)
-
             store.dispatch({ type: SET_USER, loggedinUser })
             return loggedinUser
         })
@@ -37,7 +35,7 @@ export function userActivities(activity) {
 export function updateUser(user) {
     return userService.update(user)
         .then(updatedUser => {
-                store.dispatch({ type: SET_USER, loggedinUser: updatedUser })
-                return updateUser
+            store.dispatch({ type: SET_USER, loggedinUser: updatedUser })
+            return updateUser
         })
 }

@@ -1,63 +1,12 @@
-const { createStore } = Redux
-import { userService } from "../services/user.service.js"
+const { createStore,combineReducers } = Redux
 
-export const SET_TODOS = 'SET_TODOS'
-export const REMOVE_TODO = 'REMOVE_TODO'
-export const EDIT_TODO = 'EDIT_TODO'
+import { todoReducer } from "./todo.reducer.js"
+import { userReducer } from "./user.reducer.js"
 
-export const SET_FILTERBY = 'SET_FILTERBY'
-
-export const SET_ISLOADING = 'SET_ISLOADING'
-
-export const SET_USER = 'SET_USER'
-export const SET_USER_BALANCE = 'SET_USER_BALANCE'
-export const SET_USER_ACTIVITIES = 'SET_USER_ACTIVITIES'
-const initialState = {
-    todos: [],
-    filterBy: {},
-    isLoading: false,
-    loggedinUser: userService.getLoggedinUser(),
-}
-
-
-export function appReducer(state = initialState, cmd = {}) {
-    let loggedinUser
-    switch (cmd.type) {
-        case SET_TODOS:
-            return { ...state, todos: cmd.todos }
-
-        case REMOVE_TODO:
-            return {
-                ...state, todos:
-                    state.todos.filter(todo => todo._id !== cmd.todoId)
-            }
-
-        case EDIT_TODO:
-            return { ...state, todos: state.todos.map(todo => todo._id === cmd.todo._id ? cmd.todo : todo) }
-
-        case SET_FILTERBY:
-            return { ...state, filterBy: { ...state.filterBy, ...cmd.filterBy } }
-
-        case SET_ISLOADING:
-            return { ...state, isLoading: cmd.isLoading }
-
-        case SET_USER:
-            return { ...state, loggedinUser: cmd.loggedinUser }
-
-        case SET_USER_BALANCE:
-            loggedinUser = { ...state.loggedinUser, balance: cmd.userBalance }
-            return { ...state, loggedinUser }
-
-        case SET_USER_ACTIVITIES:
-            loggedinUser = { ...state.loggedinUser, activities: cmd.userActivities }
-            return { ...state, loggedinUser }
-
-        default:
-            return state
-    }
-
-
-}
+const appReducer = combineReducers({
+    todoModule: todoReducer,
+    userModule: userReducer,
+})
 
 export const store = createStore(appReducer)
 window.gStore = store

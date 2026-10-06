@@ -12,15 +12,13 @@ export function UserDetails() {
     const params = useParams()
     const navigate = useNavigate()
 
-    const loggedinUser = useSelector(storeState => storeState.loggedinUser)
+    const loggedinUser = useSelector(storeState => storeState.userModule.loggedinUser)
     const [user, setUser] = useState(null)
     const [userActivities, setUserActivities] = useState(null)
 
     useEffect(() => {
         userService.getById(params.userId)
             .then(user => {
-                console.log('user', user)
-
                 setUser(user)
             })
 

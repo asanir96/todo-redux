@@ -3,22 +3,25 @@ import { TodoList } from "../cmps/TodoList.jsx"
 import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
+
 import { loadTodos, removeTodo, saveTodo } from "../store/actions/todo.js"
+
 import { userActivities } from "../store/actions/user.js"
-import { SET_FILTERBY } from "../store/store.js"
+
+import { SET_FILTERBY } from "../store/todo.reducer.js"
 
 const { useEffect } = React
 const { useSelector, useDispatch } = ReactRedux
 const { Link, useSearchParams } = ReactRouterDOM
 
 export function TodoIndex() {
-    const user = useSelector(storeState => storeState.loggedinUser)
-    const todos = useSelector(storeState => storeState.todos)
-    const filterBy = useSelector(storeState => storeState.filterBy)
-    const isLoading = useSelector(storeState => storeState.isLoading)
+    const user = useSelector(storeState => storeState.userModule.loggedinUser)
+    const todos = useSelector(storeState => storeState.todoModule.todos)
+    const filterBy = useSelector(storeState => storeState.todoModule.filterBy)
+    const isLoading = useSelector(storeState => storeState.todoModule.isLoading)
 
     const dispatch = useDispatch()
-    console.log('user', user)
+
     // Special hook for accessing search-params:
     const [searchParams, setSearchParams] = useSearchParams()
 

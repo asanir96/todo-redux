@@ -10,7 +10,7 @@ import { userLogout } from '../store/actions/user.js'
 
 export function AppHeader() {
     const navigate = useNavigate()
-    const user = useSelector(storedState => storedState.loggedinUser)
+    const user = useSelector(storedState => storedState.userModule.loggedinUser)
 
     function onLogout() {
         userLogout()
