@@ -1,7 +1,7 @@
 import { ActivitiesTableRow } from "./ActivitiesTableRow.jsx"
 
 export function ActivitiesTable({ activities, bgColor }) {
-    if (!activities) return <div>Loading...</div>
+    if (!activities) return <div className="loader"></div>
 
     return <section className="user-activities">
         <h3>User Activities</h3>

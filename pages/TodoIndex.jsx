@@ -71,19 +71,19 @@ export function TodoIndex() {
                 <Link to="/todo/edit" className="btn" >Add Todo</Link>
             </div>
             <h2>Todos List</h2>
-            {isLoading ? <div>Loading...</div> :
-                <TodoList
-                    todos={todos}
-                    onRemoveTodo={onRemoveTodo}
-                    onToggleTodo={onToggleTodo}
-                    color={user && user.preferences ? user.preferences.todoColor : null} />}
-            <h2>Todos Table</h2>
-            {isLoading ? <div>Loading...</div> : <div style={{ width: '60%', margin: 'auto' }}>
-                <DataTable
-                    todos={todos}
-                    onRemoveTodo={onRemoveTodo}
-                    color={user && user.preferences ? user.preferences.tableColor : null} />
-            </div>}
+            {isLoading ? <div className="loader"></div> :
+                <section className="content">
+                    <TodoList
+                        todos={todos}
+                        onRemoveTodo={onRemoveTodo}
+                        onToggleTodo={onToggleTodo}
+                        color={user && user.preferences ? user.preferences.todoColor : null} />
+                    <h2>Todos Table</h2>
+                    <DataTable
+                        todos={todos}
+                        onRemoveTodo={onRemoveTodo}
+                        color={user && user.preferences ? user.preferences.tableColor : null} />
+                </section>}
         </section>
     )
 }

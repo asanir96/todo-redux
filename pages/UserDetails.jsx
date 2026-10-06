@@ -40,12 +40,12 @@ export function UserDetails() {
             })
     }
 
-    if (!user) return <div>Loading...</div>
+    if (!user) return <div className="loader"></div>
 
     return (
         <section className="user-details">
             <h2>{user.fullname}</h2>
-            
+
             {user._id === loggedinUser._id &&
                 <UserPreferences user={loggedinUser} onUpdateUser={onUpdateUser} />}
 
