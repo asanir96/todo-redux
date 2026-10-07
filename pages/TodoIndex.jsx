@@ -3,7 +3,7 @@ import { TodoList } from "../cmps/TodoList.jsx"
 import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
-import { loadTodos, removeTodo, saveTodo } from "../store/actions/todo.js"
+import { loadTodos, removeTodo, saveTodo,initFilterBy } from "../store/actions/todo.js"
 
 import { userActivities } from "../store/actions/user.js"
 
@@ -25,7 +25,9 @@ export function TodoIndex() {
     const [searchParams, setSearchParams] = useSearchParams()
 
     useEffect(() => {
-        dispatch({ type: SET_FILTERBY, filterBy: todoService.getFilterFromSearchParams(searchParams) })
+        initFilterBy(searchParams)
+
+        // dispatch({ type: SET_FILTERBY, filterBy: todoService.getFilterFromSearchParams(searchParams) })
     }, [])
 
     useEffect(() => {

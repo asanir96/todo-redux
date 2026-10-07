@@ -1,6 +1,6 @@
 import { todoService } from '../../services/todo.service.js'
 import { store } from '../store.js'
-import { SET_TODOS, SET_ISLOADING, REMOVE_TODO, EDIT_TODO, ADD_TODO } from '../todo.reducer.js'
+import { SET_TODOS, SET_ISLOADING, REMOVE_TODO, EDIT_TODO, ADD_TODO, SET_FILTERBY } from '../todo.reducer.js'
 
 export function loadTodos(filterBy = {}) {
     store.dispatch({ type: SET_ISLOADING, isLoading: true })
@@ -18,6 +18,14 @@ export function removeTodo(todoId) {
         .finally(() => store.dispatch({ type: SET_ISLOADING, isLoading: false }))
 
 }
+
+export function initFilterBy(searchParams) {
+    const { filterBy } = store.getState().todoModule
+
+    if (Object.keys(filterBy).length) return
+    store.dispatch({ type: SET_FILTERBY, filterBy: todoService.getFilterFromSearchParams(searchParams) })
+}
+
 
 export function saveTodo(todoToSave) {
     return todoService.save(todoToSave)
