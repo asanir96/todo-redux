@@ -1,120 +1,103 @@
-import { utilService } from './util.service.js'
-import { storageService } from './async-storage.service.js'
-
-const TODO_KEY = 'todoDB'
-_createTodos()
+import { utilService } from "./util.service.js"
 
 export const todoService = {
     query,
     get,
-    remove,
     save,
-    getEmptyTodo,
-    getDefaultFilter,
-    getFilterFromSearchParams,
-    getImportanceStats,
+    remove
 }
-// For Debug (easy access from console):
-window.cs = todoService
+
+
+const path = './data/todo.json'
+const todos = utilService.readJsonFile(path)
 
 function query(filterBy = {}) {
-    return storageService.query(TODO_KEY)
-        .then(todos => {
-            if (filterBy.txt) {
-                const regExp = new RegExp(filterBy.txt, 'i')
-                todos = todos.filter(todo => regExp.test(todo.txt))
-            }
+    let filteredTodos = [...todos]
 
-            if (filterBy.importance) {
-                todos = todos.filter(todo => todo.importance >= filterBy.importance)
-            }
+    if (filterBy.txt) {
+        const regExp = new RegExp(filterBy.txt, 'i')
+        filteredTodos = filteredTodos.filter(todo => regExp.test(todo.txt))
+    }
 
-            return todos
-        })
+    if (filterBy.importance) {
+        filteredTodos = filteredTodos.filter(todo => todo.importance >= filterBy.importance)
+    }
+
+    const importanceStats = getImportanceStats()
+    return Promise.resolve({ todos: filteredTodos, importanceStats })
 }
 
 function get(todoId) {
-    return storageService.get(TODO_KEY, todoId)
-        .then(todo => {
-            todo = _setNextPrevTodoId(todo)
-            return todo
-        })
+    let todo = todos.find(todo => todo._id === todoId)
+    todo = _setNextPrevTodoId(todo)
+
+    return Promise.resolve(todo)
 }
 
-function remove(todoId) {
-    return storageService.remove(TODO_KEY, todoId)
-}
+function save(todoToSave, loggedInUser) {
+    if (todoToSave._id) {
+        const todoIdx = todos.findIndex(todo => todo._id === todoToSave._id)
+        const todo = todos[todoIdx]
 
-function save(todo) {
-    if (todo._id) {
-        // TODO - updatable fields
-        todo.updatedAt = Date.now()
-        return storageService.put(TODO_KEY, todo)
+        // if (!todo.creator || todo.creator._id !== loggedInUser._id) {
+        //     return Promise.reject('Not a task you created')
+        // }
+
+        const updatedTodo = { ...todos[todoIdx], ...todoToSave }
+        todos.splice(todoIdx, 1, updatedTodo)
     } else {
-        todo.createdAt = todo.updatedAt = Date.now()
+        todoToSave._id = utilService.makeId()
+        todoToSave.createdAt = todoToSave.updatedAt = Date.now()
 
-        return storageService.post(TODO_KEY, todo)
+        // todoToSave.creator = {
+        //     _id: loggedInUser._id,
+        //     fullname: loggedInUser.fullname
+        // }
+
+        todos.push(todoToSave)
+
     }
+
+    return _saveTodos()
+        .then(() => todoToSave)
 }
 
-function getEmptyTodo(txt = '', importance = 5) {
-    return { txt, importance, isDone: false }
+function remove(todoId, loggedInUser) {
+    const todoIdx = todos.findIndex(todo => todo._id === todoId)
+    const removedTodo = todos.at(todoIdx)
+    todos.splice(todoIdx, 1)
+    return _saveTodos()
+        .then(() => removedTodo)
+    // if ((loggedInUser.isAdmin) || (removedTodo.creator && removedTodo.creator._id === loggedInUser._id)) {
+    //     todos.splice(todoIdx, 1)
+    //     return _saveTodos()
+    //         .then(() => removedTodo)
+    // } else {
+    //     return Promise.reject('Not a task you created')
+    // }
 }
 
-function getDefaultFilter() {
-    return { txt: '', importance: 0 }
-}
-
-function getFilterFromSearchParams(searchParams) {
-    const defaultFilter = getDefaultFilter()
-    const filterBy = {}
-    for (const field in defaultFilter) {
-        filterBy[field] = searchParams.get(field) || ''
-    }
-    return filterBy
-}
-
-
-function getImportanceStats() {
-    return storageService.query(TODO_KEY)
-        .then(todos => {
-            const todoCountByImportanceMap = _getTodoCountByImportanceMap(todos)
-            const data = Object.keys(todoCountByImportanceMap).map(speedName => ({ title: speedName, value: todoCountByImportanceMap[speedName] }))
-            return data
-        })
-
-}
-
-function _createTodos() {
-    let todos = utilService.loadFromStorage(TODO_KEY)
-    if (!todos || !todos.length) {
-        todos = []
-        const txts = ['Learn React', 'Master CSS', 'Practice Redux']
-        for (let i = 0; i < 20; i++) {
-            const txt = txts[utilService.getRandomIntInclusive(0, txts.length - 1)]
-            todos.push(_createTodo(txt + (i + 1), utilService.getRandomIntInclusive(1, 10)))
-        }
-        utilService.saveToStorage(TODO_KEY, todos)
-    }
-}
-
-function _createTodo(txt, importance) {
-    const todo = getEmptyTodo(txt, importance)
-    todo._id = utilService.makeId()
-    todo.createdAt = todo.updatedAt = Date.now() - utilService.getRandomIntInclusive(0, 1000 * 60 * 60 * 24)
-    return todo
+function _saveTodos() {
+    return utilService.writeJsonFile(path, todos)
 }
 
 function _setNextPrevTodoId(todo) {
-    return storageService.query(TODO_KEY).then((todos) => {
-        const todoIdx = todos.findIndex((currTodo) => currTodo._id === todo._id)
-        const nextTodo = todos[todoIdx + 1] ? todos[todoIdx + 1] : todos[0]
-        const prevTodo = todos[todoIdx - 1] ? todos[todoIdx - 1] : todos[todos.length - 1]
-        todo.nextTodoId = nextTodo._id
-        todo.prevTodoId = prevTodo._id
-        return todo
-    })
+    const todoIdx = todos.findIndex((currTodo) => currTodo._id === todo._id)
+    const nextTodo = todos[todoIdx + 1] ? todos[todoIdx + 1] : todos[0]
+    const prevTodo = todos[todoIdx - 1] ? todos[todoIdx - 1] : todos[todos.length - 1]
+    todo.nextTodoId = nextTodo._id
+    todo.prevTodoId = prevTodo._id
+    return todo
+
 }
+
+function getImportanceStats() {
+    const todoCountByImportanceMap = _getTodoCountByImportanceMap(todos)
+    const data = Object.keys(todoCountByImportanceMap).map(speedName => ({ title: speedName, value: todoCountByImportanceMap[speedName] }))
+    return data
+}
+
+
 
 function _getTodoCountByImportanceMap(todos) {
     const todoCountByImportanceMap = todos.reduce((map, todo) => {
@@ -126,14 +109,17 @@ function _getTodoCountByImportanceMap(todos) {
     return todoCountByImportanceMap
 }
 
+// function _sortBugs(bugs, sortBy, sortDir) {
+//     let sortedBugs = [...bugs]
 
-// Data Model:
-// const todo = {
-//     _id: "gZ6Nvy",
-//     txt: "Master Redux",
-//     importance: 9,
-//     isDone: false,
-//     createdAt: 1711472269690,
-//     updatedAt: 1711472269690
+//     if (sortBy === 'title') {
+//         sortedBugs.sort((bug1, bug2) => sortDir * (bug1.title.localeCompare(bug2.title)))
+//     } else if (sortBy === 'severity') {
+//         sortedBugs.sort((bug1, bug2) => sortDir * (bug1.severity - bug2.severity))
+//     } else if (sortBy === 'createdAt') {
+//         sortedBugs.sort((bug1, bug2) => sortDir * (bug1.createdAt - bug2.createdAt))
+//     }
+
+//     return sortedBugs
 // }
 

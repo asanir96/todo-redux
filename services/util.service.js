@@ -1,70 +1,77 @@
+import fs from 'fs'
+import fr from 'follow-redirects'
+
+const { http, https } = fr
+
 export const utilService = {
-    makeId,
-    makeLorem,
-    getRandomIntInclusive,
-    loadFromStorage,
-    saveToStorage,
-    animateCSS,
-    debounce
+    readJsonFile,
+    writeJsonFile,
+    download,
+    httpGet,
+    makeId
 }
 
-function makeId(length = 6) {
-    var txt = ''
-    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
-    for (var i = 0; i < length; i++) {
-        txt += possible.charAt(Math.floor(Math.random() * possible.length))
-    }
-
-    return txt
+function readJsonFile(path) {
+    const str = fs.readFileSync(path, 'utf8')
+    const json = JSON.parse(str)
+    return json
 }
 
-function makeLorem(size = 100) {
-    const words = ['The sky', 'above', 'the port', 'was', 'the color' ,'of nature', 'tuned', 'to', 'a live channel', 'All', 'this happened', 'more or less', 'I', 'had', 'the story', 'bit by bit', 'from various people', 'and', 'as generally', 'happens', 'in such cases', 'each time', 'it', 'was', 'a different story', 'a pleasure', 'to', 'burn']
-    var txt = ''
-    while (size > 0) {
-        size--
-        txt += words[Math.floor(Math.random() * words.length)]
-        if (size >= 1 ) txt += ' '
-    }
-    return txt
-}
-
-function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min)
-    max = Math.floor(max)
-    return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
-}
-
-function saveToStorage(key, value) {
-    localStorage.setItem(key, JSON.stringify(value))
-}
-
-function loadFromStorage(key) {
-    const data = localStorage.getItem(key)
-    return (data) ? JSON.parse(data) : undefined
-}
-
-function animateCSS(el, animation='bounce') {
-    const prefix = 'animate__'
+function writeJsonFile(path, data) {
     return new Promise((resolve, reject) => {
-        const animationName = `${prefix}${animation}`
-        el.classList.add(`${prefix}animated`, animationName)
-        function handleAnimationEnd(event) {
-            event.stopPropagation()
-            el.classList.remove(`${prefix}animated`, animationName)
-            resolve('Animation ended')
-        }
+        const jsonData = JSON.stringify(data, null, 2)
 
-        el.addEventListener('animationend', handleAnimationEnd, { once: true })
+        fs.writeFile(path, jsonData, (err) => {
+            if (err) return reject(err)
+            resolve()
+        })
     })
 }
 
-function debounce(func, delay) {
-    let timeout = null
-    
-    return (...args) => {
-        clearTimeout(timeout)
-        timeout = setTimeout(() => func(...args), delay)
+function download(url, fileName) {
+    return new Promise((resolve, reject) => {
+        const file = fs.createWriteStream(fileName)
+        https.get(url, (content) => {
+            content.pipe(file)
+            file.on('error', reject)
+            file.on('finish', () => {
+                file.close()
+                resolve()
+            })
+        })
+    })
+}
+
+function httpGet(url) {
+    const protocol = url.startsWith('https') ? https : http
+    const options = {
+        method: 'GET'
     }
+
+    return new Promise((resolve, reject) => {
+        const req = protocol.request(url, options, (res) => {
+            let data = ''
+            res.on('data', (chunk) => {
+                data += chunk
+            })
+            res.on('end', () => {
+                resolve(data)
+            })
+        })
+        req.on('error', (err) => {
+            reject(err)
+        })
+        req.end()
+    })
+
+}
+
+function makeId(length = 5) {
+    let text = ''
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    for (let i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+    return text
 }

@@ -11,7 +11,7 @@ export function TodoEdit() {
     const [todoToEdit, setTodoToEdit] = useState(todoService.getEmptyTodo())
     const isCompletedTask = useRef(false)
     // balanceChange.current = 0
-    console.log('balanceChange.current', isCompletedTask.current)
+    console.log('todoToEdit',todoToEdit)
     const navigate = useNavigate()
     const params = useParams()
 
@@ -20,7 +20,7 @@ export function TodoEdit() {
     }, [])
 
     function loadTodo() {
-        todoService.get(params.todoId)
+        todoService.getById(params.todoId)
             .then(setTodoToEdit)
             .catch(err => console.log('err:', err))
     }

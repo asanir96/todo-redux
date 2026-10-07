@@ -1,0 +1,6 @@
+node_modules
+
+
+# Postman local workspace
+postman/
+.postman/

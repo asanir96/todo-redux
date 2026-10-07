@@ -31,6 +31,7 @@ export function initFilterBy(searchParams) {
 
 export function saveTodo(todoToSave, isCompletedTask) {
     const loggedinUser = userService.getLoggedinUser()
+    const isUpdate = !!todoToSave._id
 
     return todoService.save(todoToSave)
         .then(todoToSave => {
@@ -38,8 +39,8 @@ export function saveTodo(todoToSave, isCompletedTask) {
                 store.dispatch({ type: todoToSave._id ? EDIT_TODO : ADD_TODO, todo: todoToSave })
                 return todoToSave
             }
-            
-            if (!todoToSave._id) {
+
+            if (!isUpdate) {
                 userActivities({ txt: `Added a task`, at: Date.now() })
             }
             else if (isCompletedTask) {
