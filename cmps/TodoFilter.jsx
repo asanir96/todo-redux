@@ -1,11 +1,10 @@
-const { useState, useEffect, useRef } = React
-const { useDispatch } = ReactRedux
-import { utilService } from "../services/util.service.js"
+const { useState, useRef } = React
 
-import { SET_FILTERBY, SET_ISLOADING } from "../store/todo.reducer.js"
+import { utilService } from "../services/util.service.js"
+import {useEffectUpdate} from '../custom-hooks/useEffectUpdate.js'
+
 
 export function TodoFilter({ filterBy, onSetFilterBy }) {
-    const dispatch = useDispatch()
     const [filterByToEdit, setFilterByToEdit] = useState({ ...filterBy })
 
     const debouncedApplyFilter =
@@ -13,7 +12,7 @@ export function TodoFilter({ filterBy, onSetFilterBy }) {
             onSetFilterBy(filterBy)
         }, 500)).current
 
-    useEffect(() => {
+    useEffectUpdate(() => {
         // Notify parent
         debouncedApplyFilter(filterByToEdit)
     }, [filterByToEdit])
