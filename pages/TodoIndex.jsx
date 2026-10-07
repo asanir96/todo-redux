@@ -30,6 +30,8 @@ export function TodoIndex() {
     }, [])
 
     useEffect(() => {
+        if (!Object.keys(filterBy).length) return
+
         setSearchParams(filterBy)
         loadTodos(filterBy)
             .catch(err => {
