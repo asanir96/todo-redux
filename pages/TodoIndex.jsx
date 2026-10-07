@@ -44,12 +44,14 @@ export function TodoIndex() {
 
     function onRemoveTodo(todoId) {
         removeTodo(todoId)
-            .then(() => showSuccessMsg(`Todo removed`))
+            .then(() => {
+                userActivities({ txt: 'Deleted a task', at: Date.now() })
+                showSuccessMsg(`Todo removed`)
+            })
             .catch(err => {
                 console.log('err:', err)
                 showErrorMsg('Cannot remove todo ' + todoId)
             })
-            .then(() => userActivities({ txt: 'Deleted a task', at: Date.now() }))
     }
 
     function onToggleTodo(todo) {
