@@ -3,7 +3,6 @@ import { TodoList } from "../cmps/TodoList.jsx"
 import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
-
 import { loadTodos, removeTodo, saveTodo } from "../store/actions/todo.js"
 
 import { userActivities } from "../store/actions/user.js"
@@ -16,8 +15,8 @@ const { Link, useSearchParams } = ReactRouterDOM
 
 export function TodoIndex() {
     const user = useSelector(storeState => storeState.userModule.loggedinUser)
-    const todos = useSelector(storeState => storeState.todoModule.todos)
     const filterBy = useSelector(storeState => storeState.todoModule.filterBy)
+    const todos = useSelector(storeState => storeState.todoModule.todos)
     const isLoading = useSelector(storeState => storeState.todoModule.isLoading)
 
     const dispatch = useDispatch()
@@ -35,7 +34,7 @@ export function TodoIndex() {
         setSearchParams(filterBy)
         loadTodos(filterBy)
             .catch(err => {
-                console.eror('err:', err)
+                console.error('err:', err)
                 showErrorMsg('Cannot load todos')
             })
     }, [filterBy])

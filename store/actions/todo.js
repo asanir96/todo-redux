@@ -22,7 +22,7 @@ export function removeTodo(todoId) {
 export function saveTodo(todoToSave) {
     return todoService.save(todoToSave)
         .then(todoToSave => {
-            store.dispatch({ type: todoToSave._id ? EDIT_TODO : ADD_TODO , todo: todoToSave })
+            store.dispatch({ type: todoToSave._id ? EDIT_TODO : ADD_TODO, todo: todoToSave })
             return todoToSave
         })
 }
