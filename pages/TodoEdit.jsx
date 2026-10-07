@@ -54,18 +54,10 @@ export function TodoEdit() {
 
     function onSaveTodo(ev) {
         ev.preventDefault()
-        saveTodo(todoToEdit)
+        saveTodo(todoToEdit,isCompletedTask.current)
             .then((savedTodo) => {
                 navigate('/todo')
                 showSuccessMsg(`Todo Saved (id: ${savedTodo._id})`)
-                if (!params.todoId) {
-                    userActivities({ txt: `Added a task`, at: Date.now() })
-                }
-                else if (isCompletedTask.current) {
-                    userActivities({ txt: `Completed a task`, at: Date.now() })
-                } else {
-                    userActivities({ txt: `Edited a todo`, at: Date.now() })
-                }
             })
             .catch(err => {
                 showErrorMsg('Cannot save todo')
